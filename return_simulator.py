@@ -9,18 +9,20 @@ cash = param.cash_alloc
 lt_holding_pct = param.lt_holding_pct
 rebalance = param.rebalance_period
 lt_holdings = []
+lt_returns = 0
 
 #print initial parameters
 print('\nInitial Simulation Parameters:')
 print('Starting portfolio value: ${:.2f}'.format(start_value))
 print('Cash allocation: ${:.2f}'.format(cash*start_value))
 print('Long-term allocation: ${:.2f}'.format(lt_alloc*start_value))
-print('Allocation per long-term holding: {:.2f}%'.format(lt_holding_pct * 100))
 print('Rebalance every {} days'.format(rebalance))
-print('\nLong-term holdings:')
-for i in range(int((lt_alloc*start_value) / ((lt_alloc*start_value) * lt_holding_pct))):
-    lt_holdings.append(((lt_alloc*start_value) * lt_holding_pct))
-    print('Stock {}: ${:.2f}'.format(i+1, lt_holdings[i]))
+if lt_alloc > 0:
+    print('Allocation per long-term holding: {:.2f}%'.format(lt_holding_pct * 100))
+    print('\nLong-term holdings:')
+    for i in range(int((lt_alloc*start_value) / ((lt_alloc*start_value) * lt_holding_pct))):
+        lt_holdings.append(((lt_alloc*start_value) * lt_holding_pct))
+        print('Stock {}: ${:.2f}'.format(i+1, lt_holdings[i]))
 print('\nBegin simulation:\n')
 
 #begin Simulation
@@ -64,15 +66,16 @@ while portfolio > (portfolio * (1 - param.max_loss)):
         if day % rebalance != 0:
             pass
         else:
-            lt_holdings, lt_returns = calculate_lt_returns(lt_holdings, param.lt_win_pct, param.lt_gain_pct, param.lt_loss_pct)
-            print('\nLong-term holdings:')
-            for i in range(len(lt_holdings)):
-                print('Stock {}: ${:.2f}'.format(i+1, lt_holdings[i]))
-            print('Period returns for long-term holdings: ${:.2f}'.format(lt_returns))
-            print('Period returns for short-term holdings: ${:.2f}'.format(sum(st_returns)))
+            if lt_alloc > 0:
+                lt_holdings, lt_returns = calculate_lt_returns(lt_holdings, param.lt_win_pct, param.lt_gain_pct, param.lt_loss_pct)
+                print('\nLong-term holdings:')
+                for i in range(len(lt_holdings)):
+                    print('Stock {}: ${:.2f}'.format(i+1, lt_holdings[i]))
+                    print('Period returns for long-term holdings: ${:.2f}'.format(lt_returns))
+                    print('Period returns for short-term holdings: ${:.2f}'.format(sum(st_returns)))
+                    portfolio += lt_returns
             period_returns = lt_returns + sum(st_returns)
             st_returns = []
-            portfolio += lt_returns
             print('Portfolio balance after {} days: ${:.2f}.\n'.format(day, portfolio))
 
             #make distributions if necessary
@@ -83,15 +86,17 @@ while portfolio > (portfolio * (1 - param.max_loss)):
                 portfolio -= distribution
                 print('New portfolio balance: ${:.2f}'.format(portfolio))
 
-            lt_holdings = []
-            print('New long-term holdings:')
-            for i in range(int((lt_alloc*portfolio) / ((lt_alloc*portfolio) * lt_holding_pct))):
-                lt_holdings.append(((lt_alloc*portfolio) * lt_holding_pct))
-                print('Stock {}: ${:.2f}'.format(i+1, lt_holdings[i]))
+            if lt_alloc > 0:
+                lt_holdings = []
+                print('New long-term holdings:')
+                for i in range(int((lt_alloc*portfolio) / ((lt_alloc*portfolio) * lt_holding_pct))):
+                    lt_holdings.append(((lt_alloc*portfolio) * lt_holding_pct))
+                    print('Stock {}: ${:.2f}'.format(i+1, lt_holdings[i]))
+
             #recalculate trade size
             if not param.size_continuous:
                 trade_size = portfolio * param.trade_size
-                print('\nNew trade size: ${:.2f}'.format(trade_size))
+                print('--- New trade size: ${:.2f} per trade ---'.format(trade_size))
     else:
         print('You reached your maximum loss. Portfolio amount: {:.2f}'.format(portfolio))
         break

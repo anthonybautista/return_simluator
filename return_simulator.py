@@ -7,6 +7,7 @@ lt_alloc = param.lt_alloc
 st_alloc = param.st_alloc
 cash = param.cash_alloc
 lt_holding_pct = param.lt_holding_pct
+lt_holding_amt = 1 / lt_holding_pct
 rebalance = param.rebalance_period
 lt_holdings = []
 lt_returns = 0
@@ -25,7 +26,7 @@ print('Rebalance every {} days'.format(rebalance))
 if lt_alloc > 0:
     print('Allocation per long-term holding: {:.2f}%'.format(lt_holding_pct * 100))
     print('\nLong-term holdings:')
-    for i in range(int((lt_alloc*start_value) / ((lt_alloc*start_value) * lt_holding_pct))):
+    for i in range(int(lt_holding_amt)):
         lt_holdings.append(((lt_alloc*start_value) * lt_holding_pct))
         print('Stock {}: ${:.2f}'.format(i+1, lt_holdings[i]))
 print('\nBegin simulation:\n')
@@ -87,17 +88,17 @@ while portfolio > (portfolio * (1 - param.max_loss)):
             if param.dist_pct > 0:
                 distribution = period_returns * param.dist_pct
                 total_distributions.append(distribution)
-                print('\nDistributions: ${:.2f}'.format(distribution))
+                print('Distributions: ${:.2f}'.format(distribution))
                 portfolio -= distribution
                 print('New portfolio balance: ${:.2f}'.format(portfolio))
 
             if lt_alloc > 0:
                 lt_holdings = []
                 print('New long-term holdings:')
-                for i in range(int((lt_alloc*portfolio) / ((lt_alloc*portfolio) * lt_holding_pct))):
+                for i in range(int(lt_holding_amt)):
                     lt_holdings.append(((lt_alloc*portfolio) * lt_holding_pct))
                     print('Stock {}: ${:.2f}'.format(i+1, lt_holdings[i]))
-
+                print('')
             #recalculate trade size
             if not param.size_continuous:
                 trade_size = portfolio * param.trade_size

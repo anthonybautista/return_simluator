@@ -11,6 +11,11 @@ rebalance = param.rebalance_period
 lt_holdings = []
 lt_returns = 0
 
+#ensure allocations equal 100% of portfolio
+if lt_alloc + st_alloc + cash != 1:
+    print('ERROR: Allocations must equal 100%')
+    exit()
+
 #print initial parameters
 print('\nInitial Simulation Parameters:')
 print('Starting portfolio value: ${:.2f}'.format(start_value))

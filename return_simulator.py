@@ -71,9 +71,9 @@ while portfolio > (portfolio * (1 - param.max_loss)):
                 print('\nLong-term holdings:')
                 for i in range(len(lt_holdings)):
                     print('Stock {}: ${:.2f}'.format(i+1, lt_holdings[i]))
-                    print('Period returns for long-term holdings: ${:.2f}'.format(lt_returns))
-                    print('Period returns for short-term holdings: ${:.2f}'.format(sum(st_returns)))
                     portfolio += lt_returns
+                print('Period returns for long-term holdings: ${:.2f}'.format(lt_returns))
+                print('Period returns for short-term holdings: ${:.2f}'.format(sum(st_returns)))
             period_returns = lt_returns + sum(st_returns)
             st_returns = []
             print('Portfolio balance after {} days: ${:.2f}.\n'.format(day, portfolio))

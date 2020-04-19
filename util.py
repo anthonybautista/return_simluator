@@ -25,6 +25,7 @@ def get_params():
     parser.add_argument('--target_value', type = int, default = 100000, help = 'Portfolio value before ending simulation.')
     parser.add_argument('--max_loss', type = float, default = 0.20, help = 'Maximum percentage loss before ending simulation.')
     parser.add_argument('--dist_pct', type = float, default = 0.0, help = 'Percentage of profits to distribute at rebalancing.')
+    parser.add_argument('--n_sims', type = int, default = 1, help = 'Number of simulations to run.')
 
     return parser.parse_args()
 

@@ -73,7 +73,7 @@ for i in range(param.n_sims):
                 day_totals.append(day)
                 if param.dist_pct > 0:
                     print('Total distributions during simulation: ${:.2f}'.format(sum(total_distributions)))
-                    dist_results.append(total_distributions)
+                    dist_results.append(round(sum(total_distributions), 2))
 
         else:
             if portfolio >= param.target_value:
@@ -82,7 +82,7 @@ for i in range(param.n_sims):
                 day_totals.append(day)
                 if param.dist_pct > 0:
                     print('Total distributions during simulation: ${:.2f}'.format(sum(total_distributions)))
-                    dist_results.append(total_distributions)
+                    dist_results.append(round(sum(total_distributions), 2))
                 end_sim = True
 
             else:
